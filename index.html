@@ -1,0 +1,979 @@
+<!DOCTYPE html><!--  Last Published: Fri Sep 13 2024 00:37:49 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="6671ae62b353859ee5173f64" data-wf-site="6671ae62b353859ee5173f5d">
+<head>
+  <meta charset="utf-8">
+  <title>WebRend</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/webrend-ddb370.webflow.css" rel="stylesheet" type="text/css">
+  <style>@media (max-width:991px) and (min-width:768px) {html.w-mod-js:not(.w-mod-ix) [data-w-id="4ae54a89-9e93-7a3f-0b46-3534687844bc"] {display:flex;}}@media (max-width:767px) and (min-width:480px) {html.w-mod-js:not(.w-mod-ix) [data-w-id="4ae54a89-9e93-7a3f-0b46-3534687844bc"] {display:flex;}}@media (max-width:479px) {html.w-mod-js:not(.w-mod-ix) [data-w-id="4ae54a89-9e93-7a3f-0b46-3534687844bc"] {display:flex;}}</style>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Varela:400","Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Great Vibes:400","Inconsolata:400,700","Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Varela Round:400","PT Sans:400,400italic,700,700italic","Changa One:400,400italic"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon">
+  <script>
+    // This script prints a custom message to the browser console
+    (function() {
+        console.log('%cCreated by WebRend and Kevin Vera', 'color: green; font-size: 20px; font-weight: bold;');
+    })();
+</script>
+  <link rel="preconnect" href="https://cdn.fonts.net">
+  <link href="https://cdn.fonts.net/kit/9acc24ae-3b6e-46b3-8e4a-791be963aa93/9acc24ae-3b6e-46b3-8e4a-791be963aa93.css" rel="stylesheet">
+  <!--  FIREBASE CODE  -->
+  <script type="module">
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"; // Add getDocs import
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-functions.js";
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCJM45UvPM9DPxnUy7hCfoMN2Ft4wV9o40",
+  authDomain: "webrend-f3469.firebaseapp.com",
+  projectId: "webrend-f3469",
+  storageBucket: "webrend-f3469.appspot.com",
+  messagingSenderId: "628574920834",
+  appId: "1:628574920834:web:c3bd854a61a9b5caa7949b",
+  measurementId: "G-QHNJHR0KCP"
+};
+// Initialize Firebase and declare "global" variables
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+// Identify auth action forms
+let signUpForm = document.getElementById('wf-form-signup-form');
+let signInForm = document.getElementById('wf-form-signin-form');
+let signOutButton = document.getElementById('signout-button');
+let buyWebRendLiteButton = document.getElementById('buy-webrend-lite');
+let buyWebRendProButton = document.getElementById('buy-webrend-pro');
+let boughtText = document.getElementById('bought-text');
+let cancelSubscriptionButton = document.getElementById('cancel-subscription-button');
+// Assign event listeners
+if (buyWebRendLiteButton !== null) {
+    buyWebRendLiteButton.addEventListener('click', buyWebRendLite);
+}
+if (buyWebRendProButton !== null) {
+    buyWebRendProButton.addEventListener('click', buyWebRendPro);
+}
+if (signUpForm !== null) {
+  signUpForm.addEventListener('submit', handleSignUp, true);
+}
+if (signInForm !== null) {
+  signInForm.addEventListener('submit', handleSignIn, true);
+}
+if (signOutButton !== null) {
+    signOutButton.addEventListener('click', handleSignOut);
+}
+// Handle signUp
+function handleSignUp(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            console.log('User successfully created: ' + user.email);
+            window.location.href = 'https://webrend.com/start';
+        })
+        .catch((error) => {
+            const errorText = document.getElementById('signup-error-message');
+            errorText.innerHTML = error.message;
+        });
+}
+// Handle signIn
+function handleSignIn(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const email = document.getElementById('signin-email').value;
+  const password = document.getElementById('signin-password').value;
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log('User logged in: ' + user.email);
+      window.location.href = 'https://webrend.com/dashboard';
+    })
+    .catch((error) => {
+      const errorText = document.getElementById('signin-error-message');
+      errorText.innerHTML = error.message;
+    });
+}
+function handleSignOut() {
+    signOut(auth).then(() => {
+        console.log('User signed out');
+    }).catch((error) => {
+        console.log(error.message);
+    });
+}
+// Function to get Checkout URL
+export const getCheckoutUrl = async function(app, priceId) {
+  const auth = getAuth(app);
+  const userId = auth.currentUser?.uid;
+  if (!userId) throw new Error("User is not authenticated");
+  const checkoutSessionRef = collection(
+    db,
+    "customers",
+    userId,
+    "checkout_sessions"
+  );
+  const docRef = await addDoc(checkoutSessionRef, {
+    price: priceId,
+    success_url: window.location.origin,
+    cancel_url: window.location.origin,
+  });
+  return new Promise(function(resolve, reject) {
+    const unsubscribe = onSnapshot(docRef, function(snap) {
+      const { error, url } = snap.data();
+      if (error) {
+        unsubscribe();
+        reject(new Error(`An error occurred: ${error.message}`));
+      }
+      if (url) {
+        console.log("Stripe Checkout URL:", url);
+        unsubscribe();
+        resolve(url);
+      }
+    });
+  });
+};
+// Function to get Portal URL
+export const getPortalUrl = async function(app) {
+  const user = auth.currentUser;
+  try {
+    const functionRef = httpsCallable(
+      functions,
+      "ext-firestore-stripe-payments-createPortalLink"
+    );
+    const { data } = await functionRef({
+      customerId: user?.uid,
+      returnUrl: window.location.origin,
+    });
+    console.log("Reroute to Stripe portal: ", data.url);
+    return data.url;
+  } catch (error) {
+    console.error(error);
+    throw new Error("No url returned");
+  }
+};
+async function cancelSubscription(subscriptionId) {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('User is not authenticated.');
+    }
+    const idToken = await user.getIdToken();
+    const response = await fetch(
+      'https://us-central1-webrend-f3469.cloudfunctions.net/cancelSubscription',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ subscriptionId: subscriptionId }),
+      }
+    );
+    const result = await response.json();
+    console.log(result.message);
+    // Return the result for handling after subscription cancellation
+    return result;
+  } catch (error) {
+    console.error('Error canceling subscription:', error);
+    throw error;
+  }
+}
+// Function to check subscription status
+async function checkSubscriptionStatus(user, priceId) {
+  try {
+    const subscriptionsRef = collection(db, "customers", user.uid, "subscriptions");
+    const querySnapshot = await getDocs(subscriptionsRef);
+    let isSubscribed = false;
+    querySnapshot.forEach((doc) => {
+      const subscriptionData = doc.data();
+      if (subscriptionData.items.some(item => item.price.id === priceId) && subscriptionData.status === "active") {
+        isSubscribed = true;
+      }
+    });
+    return isSubscribed;
+  } catch (error) {
+    console.error('Error checking subscription status:', error);
+    return false;
+  }
+}
+async function updateSubscriptionDisplay(user) {
+  // Elements related to Lite and Pro subscriptions
+  const boughtTextLite = document.getElementById('bought-text-lite');
+  const boughtTextPro = document.getElementById('bought-text-pro');
+  // Price IDs for Lite and Pro subscriptions
+  const priceIdLite = "price_1PJjjPBpV7OXHoK2RCLIP7Er";
+  const priceIdPro = "price_1PJjjPadaAfFAFAFRCLIP7E";
+  // Check subscription status for both plans
+  const isSubscribedLite = await checkSubscriptionStatus(user, priceIdLite);
+  const isSubscribedPro = await checkSubscriptionStatus(user, priceIdPro);
+  // Show or hide elements based on subscription status
+  if (isSubscribedLite) {
+    if (boughtTextLite) {
+      boughtTextLite.style.display = "block";
+    }
+  } else {
+    if (boughtTextLite) {
+      boughtTextLite.style.display = "none";
+    }
+  }
+  if (isSubscribedPro) {
+    if (boughtTextPro) {
+      boughtTextPro.style.display = "block";
+    }
+  } else {
+    if (boughtTextPro) {
+      boughtTextPro.style.display = "none";
+    }
+  }
+}
+function buyWebRendLite() {
+  const buyWebRendLiteNow = async () => {
+    const priceId = "price_1PJjjPBpV7OXHoK2RCLIP7Er";
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    window.location.href = checkoutUrl;
+    console.log("Bought WebRend Lite");
+  };
+  buyWebRendLiteNow();
+}
+function buyWebRendPro() {
+  const buyWebRendProNow = async () => {
+    const priceId = "price_1PJjjPBpV7OXHoK2RCLIP7Er";
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    window.location.href = checkoutUrl;
+    console.log("Bought WebRend Pro");
+  };
+  buyWebRendProNow();
+}
+// Assign event listeners, if the elements exist
+if (cancelSubscriptionButton !== null) {
+  cancelSubscriptionButton.addEventListener('click', async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('User is not authenticated.');
+      }
+      const subscriptionId = await getSubscriptionId(user); // Get the subscription ID from Firestore
+      await cancelSubscription(subscriptionId); // Cancel the subscription using the retrieved ID
+      // Reload the window after successful subscription cancellation
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during subscription cancellation:', error);
+    }
+  });
+}
+// Monitor authentication state
+onAuthStateChanged(auth, async (user) => {
+  await updateSubscriptionDisplay(user);
+  let publicElements = document.querySelectorAll("[data-onlogin='hide']");
+  let privateElements = document.querySelectorAll("[data-onlogin='show']");
+  let subscribedElements = document.querySelectorAll("[data-issubscribed='true']");
+  let notSubscribedElements = document.querySelectorAll("[data-issubscribed='false']");
+  if (user) {
+      const uid = user.uid;
+      privateElements.forEach(function(element) {
+          element.style.display = "flex";
+      });
+      publicElements.forEach(function(element) {
+          element.style.display = "none";
+      });
+      // Update subscription status
+      const priceIdLite = "price_1PJjjPBpV7OXHoK2RCLIP7Er";
+      const isSubscribedLite = await checkSubscriptionStatus(user, priceIdLite);
+      let isSubscribed = isSubscribedLite;
+      const priceIdPro = "price_1PJjjPadaAfFAFAFRCLIP7E";
+      const isSubscribedPro = await checkSubscriptionStatus(user, priceIdPro);
+      isSubscribed = isSubscribedLite || isSubscribedPro; // Update isSubscribed if either is true
+      if (isSubscribed) {
+        subscribedElements.forEach(function(element) {
+          element.style.display = "flex";
+        });
+        notSubscribedElements.forEach(function(element) {
+          element.style.display = "none";
+        });
+      } else {
+        subscribedElements.forEach(function(element) {
+          element.style.display = "none";
+        });
+        notSubscribedElements.forEach(function(element) {
+          element.style.display = "flex";
+        });
+      }
+      console.log(`The current user's UID is ${uid}`);
+  } else {
+      publicElements.forEach(function(element) {
+          element.style.display = "flex";
+      });
+      privateElements.forEach(function(element) {
+          element.style.display = "none";
+      });
+      subscribedElements.forEach(function(element) {
+        element.style.display = "none";
+      });
+      notSubscribedElements.forEach(function(element) {
+        element.style.display = "flex";
+      });
+    }
+});
+</script>
+</head>
+<body class="body">
+  <div data-w-id="4ae54a89-9e93-7a3f-0b46-3534687844bc" class="mobile-block"><img src="images/W-letter-for-webrend-min.png" loading="lazy" width="Auto" alt="" class="image-9">
+    <div class="text-block-36">WebRend is not optimized for mobile just yet. Use a desktop browser.<br>Thank you!</div>
+  </div>
+  <div data-w-id="703aaa69-7944-95d3-df94-fbbf96c7ecd7" style="display:flex" class="preloader"><img src="images/W-letter-for-webrend-min.png" loading="lazy" width="Auto" data-w-id="4b66bfa1-2302-34a9-6c64-9de9551b3a1f" alt="" class="image-9">
+    <div data-w-id="c606837c-362f-af6b-9a0a-281b48f2916b" style="opacity:0" class="loading-bar">
+      <div data-w-id="470c6eb1-e800-67fb-7663-a1f2e020626b" style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="moving-bar"></div>
+    </div>
+  </div>
+  <div class="nav-wrapper">
+    <div class="nav-bar">
+      <div class="div-block-37">
+        <a href="index.html" aria-current="page" class="mm-button home-nav w-inline-block w--current"><img src="images/W-letter-for-webrend-min.png" loading="lazy" alt="" class="image-3"></a>
+        <div class="div-block-30">
+          <a data-issubscribed="false" data-w-id="a98b550b-8682-39de-a712-69c9be3c485b" href="#" class="mm-button membership-nav w-inline-block"><img src="images/premium-min.png" loading="lazy" alt="" class="membership-image">
+            <div class="text-block-10">Pricing</div>
+          </a>
+          <a data-issubscribed="true" href="dashboard.html" class="mm-button dashboard-nav w-inline-block"><img src="images/dashboard-min.png" loading="lazy" alt="" class="dashboard-image">
+            <div class="text-block-13">Dashboard</div>
+          </a>
+          <a href="work.html" class="mm-button portfolio-button w-inline-block"><img src="images/layers-min.png" loading="lazy" width="35" alt="" class="image-5">
+            <div class="text-block-14">Work</div>
+          </a>
+          <a href="https://calendly.com/webrend/discovery-call" target="_blank" class="mm-button contact-us w-inline-block"><img src="images/phone-min.png" loading="lazy" width="35" alt="" class="image-7">
+            <div class="text-block-15">Contact</div>
+          </a>
+          <a data-onlogin="show" data-w-id="a98b550b-8682-39de-a712-69c9be3c486b" href="#" class="mm-button profile-nav w-inline-block"><img src="images/user-1-min.png" loading="lazy" alt="" class="profile-image">
+            <div class="text-block-16">Profile</div>
+          </a>
+        </div>
+        <div class="div-block-38"></div>
+        <a data-onlogin="hide" href="sign-up.html" class="mm-button contact-us w-inline-block"><img src="images/enter-min.png" loading="lazy" width="50" alt="" class="login-image">
+          <div class="text-block-16">Log In</div>
+        </a>
+        <a id="signout-button" data-onlogin="show" href="index.html" aria-current="page" class="mm-button contact-us w-inline-block w--current"><img src="images/enter-min.png" loading="lazy" width="50" alt="" class="login-image">
+          <div class="text-block-16">Sign Out</div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div id="w-node-c85f2d10-0941-36ec-8d00-20b37c3c20a2-e5173f64" class="profile-page">
+    <div data-w-id="c85f2d10-0941-36ec-8d00-20b37c3c20a3" class="interaction-block-background-profile-page"></div>
+    <div class="profile-card">
+      <div data-current="Tab 1" data-easing="ease" data-duration-in="300" data-duration-out="100" class="tabs-2 w-tabs">
+        <div class="tabs-menu-2 w-tab-menu">
+          <a data-w-tab="Tab 1" class="tab-link w-inline-block w-tab-link w--current">
+            <div>General</div>
+          </a>
+          <a data-w-tab="Tab 2" class="tab-link w-inline-block w-tab-link">
+            <div>Email</div>
+          </a>
+          <a data-w-tab="Tab 3" class="tab-link w-inline-block w-tab-link">
+            <div>Password</div>
+          </a>
+        </div>
+        <div class="tabs-content-2 w-tab-content">
+          <div data-w-tab="Tab 1" class="w-tab-pane w--tab-active">
+            <div class="card-bottom">
+              <div class="form-block-2 w-form">
+                <form id="wf-form-Website-Form" name="wf-form-Website-Form" data-name="Website Form" method="post" data-ms-form="profile" data-wf-page-id="6671ae62b353859ee5173f64" data-wf-element-id="3bbe63d4-5897-1147-dd94-cad5c9dc84c0">
+                  <div class="form-field-2">
+                    <div class="label">Profile picture</div>
+                    <div class="ms-profile-image-row"><img data-ms-member="profile-image" src="images/white-profile-empty-1.svg" alt="" class="ms-profile-image-preview">
+                      <a data-ms-action="profile-image" href="#" class="ms-profile-upload w-inline-block">
+                        <div>Upload Image</div>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field-2"><label for="name" class="label">First name</label><input class="field w-input" maxlength="256" name="name" data-name="Name" placeholder="Johnny" type="text" id="name" data-ms-member="first-name"></div>
+                    <div class="form-field-2"><label for="name-2" class="label">Last name</label><input class="field w-input" maxlength="256" name="name-2" data-name="Name 2" placeholder="Appleseed" type="text" id="name-2" data-ms-member="last-name"></div>
+                  </div>
+                  <div class="form-field-2"><label for="name-2" class="label">Company</label><input class="field w-input" maxlength="256" name="name-2" data-name="Name 2" placeholder="WebRend LLC" type="text" id="name-2" data-ms-member="company"></div>
+                  <div class="form-field-2"><label for="Website" class="label">Website</label><input class="field w-input" maxlength="256" name="Website" data-name="Website" placeholder="www.google.com" type="text" id="Website" required=""></div><input type="submit" data-wait="Please wait..." class="share-button w-button" value="Save profile">
+                </form>
+                <div class="w-form-done">
+                  <div>Thank you! Your submission has been received!</div>
+                </div>
+                <div class="w-form-fail">
+                  <div>Oops! Something went wrong while submitting the form.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-w-tab="Tab 2" class="w-tab-pane">
+            <div class="card-bottom">
+              <div class="form-block-2 w-form">
+                <form id="email-form" name="email-form" data-name="Email Form" method="get" data-ms-form="email" data-wf-page-id="6671ae62b353859ee5173f64" data-wf-element-id="3bbe63d4-5897-1147-dd94-cad5c9dc84e4">
+                  <div class="form-field-2"><label for="Email" class="label">Email address</label><input class="field w-input" maxlength="256" name="Email" data-name="Email" placeholder="" type="email" id="Email" data-ms-member="email"></div><input type="submit" data-wait="Please wait..." class="share-button w-button" value="Update email">
+                </form>
+                <div class="w-form-done">
+                  <div>Thank you! Your submission has been received!</div>
+                </div>
+                <div class="w-form-fail">
+                  <div>Oops! Something went wrong while submitting the form.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-w-tab="Tab 3" class="w-tab-pane">
+            <div class="card-bottom">
+              <div class="form-block-2 w-form">
+                <form id="email-form" name="email-form" data-name="Email Form" method="get" data-ms-form="password" data-wf-page-id="6671ae62b353859ee5173f64" data-wf-element-id="3bbe63d4-5897-1147-dd94-cad5c9dc84f3">
+                  <div class="form-field-2"><label for="Password" class="label">Current password</label><input class="field w-input" maxlength="256" name="Password" data-name="Password" placeholder="" type="password" id="Password" data-ms-member="current-password" required=""></div>
+                  <div class="form-field-2"><label for="New-password" class="label">New password</label><input class="field w-input" maxlength="256" name="New-password" data-name="New Password" placeholder="" type="password" id="New-password" data-ms-member="new-password" required=""></div><input type="submit" data-wait="Please wait..." class="share-button w-button" value="Save password">
+                </form>
+                <div class="w-form-done">
+                  <div>Thank you! Your submission has been received!</div>
+                </div>
+                <div class="w-form-fail">
+                  <div>Oops! Something went wrong while submitting the form.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="plan-buttons">
+      <a href="#" class="button-2 w-button">Upgrade</a>
+      <a id="cancel-subscription-button" data-ms-action="customer-portal" href="#" class="button-3 w-button">Cancel Plan</a>
+    </div>
+  </div>
+  <div id="w-node-_59770e96-55e8-9a39-dfe4-f86eabc7bff0-e5173f64" data-w-id="59770e96-55e8-9a39-dfe4-f86eabc7bff0" class="main-menu">
+    <div data-w-id="7cffa448-dc45-706c-88cc-19492479aeb4" class="interaction-block-exit-menu"></div>
+    <div class="main-menu-background"></div>
+    <div class="buttons">
+      <div id="w-node-c10c6618-94a4-777b-b935-96e1103344cb-e5173f64" class="menubutton"></div>
+      <div id="w-node-_113c2364-7e56-afa7-ab02-84eed4a7c2b9-e5173f64" class="menubutton"></div>
+      <div id="w-node-d6d16aa5-7dbe-3476-0436-5517562fcd8e-e5173f64" class="menubutton"></div>
+      <div id="w-node-d3f1ba9a-f8bf-e0da-887f-e9e1aec2e0b0-e5173f64" class="menubutton"></div>
+      <div id="w-node-_0d8630e7-57f1-f6af-5c62-75092828349d-e5173f64" class="menubutton"></div>
+      <div id="w-node-fb612737-9d00-bf64-4461-7ae5b832d05c-e5173f64" class="menubutton"></div>
+      <div id="w-node-_18b8f649-03d4-3912-1026-d435dae421b4-e5173f64" class="menubutton"></div>
+      <div id="w-node-_7a5a5c8f-db27-d125-2b43-ffb80a715034-e5173f64" class="menubutton"></div>
+      <div id="w-node-f9f16bdf-8dda-f5e6-cef9-a3b97278a18a-e5173f64" class="menubutton"></div>
+    </div>
+  </div>
+  <div data-w-id="4240b32b-ed80-3dc0-2930-78cfa7ae9c8a" style="opacity:0" class="membership-prompt">
+    <div data-w-id="6810c30d-e925-a432-7dc0-6ab17b9a9583" class="interaction-block-exit-menu"></div>
+    <div id="w-node-f3128af0-6369-a56e-2446-be0d40a63fed-e5173f64" class="sign-up-wrapper">
+      <div style="-webkit-transform:translate3d(0, 0, 0) scale3d(0.8, 0.8, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(0.8, 0.8, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(0.8, 0.8, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(0.8, 0.8, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="sign-up-prompt">
+        <div id="w-node-df745cf5-e02e-99ca-ce59-0c447d3b5afe-e5173f64" class="su-desc">
+          <div class="mem-desc">
+            <h1 class="heading">Join the Dark Side.</h1>
+            <p class="paragraph">While website design requires endless fixing, website agencies delve in taking your money by signing high-value contracts to get you wrapped in as fast as possible. We, hate that. <br><br>With WebRend, you&#x27;ll be able to apply for a website, check on the website, ask for revisions, and then some, all while not having to worry about endless meetings, random calls, or constant contracts to simply make a slight change.</p>
+            <div class="benefits">
+              <h3>Benefits of a WebRend Membership</h3>
+              <div id="w-node-_5d6752e3-4d70-2ca2-b5dc-30151eed8dfd-e5173f64" class="div-block-5">
+                <p id="w-node-bf4e52b7-5797-3462-5450-faa241f6bf85-e5173f64">Daily Website Updates</p>
+              </div>
+            </div>
+          </div>
+          <div class="referral-prompt">
+            <div class="circles">
+              <div class="circle1"></div>
+              <div class="circle1 _2"></div>
+            </div>
+            <div class="text-block">*Projects may be turned into memberships. Contact sales to learn more.</div>
+          </div>
+        </div>
+        <div id="w-node-_2a4bb758-1210-acac-1e39-23faf07a1ef1-e5173f64" class="sign-up-interaction">
+          <div class="sign-up-panel">
+            <div class="top-half-sign-up">
+              <div class="sign-up-card-desc-subscription">
+                <h1 class="heading-9">WebRend Membership</h1>
+                <div class="text-block-3">Unlimited website design for a fraction of the cost.</div>
+              </div>
+              <div class="choices">
+                <div class="lite-v-pro">
+                  <div style="-webkit-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="selector"></div>
+                  <div data-w-id="0e77ab95-d11b-2107-d2c2-a8a2918d74c7" class="text-block-2-copy">Lite</div>
+                  <div data-w-id="e5947b2e-dbb6-9975-1243-1d47a3b449a6" class="text-block-2">Pro</div>
+                </div>
+                <div class="month-vs-year">
+                  <div style="-webkit-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="selector-mvy"></div>
+                  <div data-w-id="4a7c6c9f-ecd0-3af8-7bd3-66a23c808f91" class="monthly">Monthly</div>
+                  <div data-w-id="4a7c6c9f-ecd0-3af8-7bd3-66a23c808f93" class="yearly">Yearly</div>
+                </div>
+              </div>
+              <p class="paragraph-9">009</p>
+            </div>
+            <div class="prices">
+              <div class="absolute-wrapper-for-lite-and-pro">
+                <div style="opacity:1" class="lite-opacity-wrapper">
+                  <h3 class="heading-8">Lite</h3>
+                  <div class="lite-prices-for-membership">
+                    <h1 class="heading-4">$623</h1>
+                    <p class="paragraph-2">/ per month, cancel anytime.</p>
+                  </div>
+                  <div>
+                    <a data-onlogin="hide" href="sign-up.html" class="membership-button-lite-mothly w-button">Get Started</a>
+                    <a id="buy-webrend-lite" data-onlogin="show" href="#" class="buylitebutton w-button">Buy Lite</a>
+                    <div id="bought-text-lite">BOUGHT.</div>
+                  </div>
+                  <p>The classic subscription, meant for simple websites. Best for small businesses who just need a little pop.</p>
+                </div>
+                <div style="opacity:0" class="pro-opacity-wrapper">
+                  <h3 class="heading-8">Pro</h3>
+                  <div class="pro-prices-for-membership">
+                    <h1 class="heading-4">$1,194</h1>
+                    <p class="paragraph-2">/ per month, cancel anytime.</p>
+                  </div>
+                  <div>
+                    <a data-onlogin="hide" href="sign-up.html" class="membership-button-pro-monthly w-button">Get Started</a>
+                    <a id="buy-webrend-pro" data-onlogin="show" href="#" class="buyprobutton w-button">Buy Pro</a>
+                    <div id="bought-text-pro" class="text-block-24">BOUGHT.</div>
+                  </div>
+                  <p>The new Pro subscription, aimed at creating top-notch interactive experiences. Perfect for enterprises. </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="features">
+        <div class="feature-1">
+          <div class="div-block"></div>
+          <div>
+            <h4 class="heading-2">On-Call Communication.</h4>
+            <p>Daily, on-call communication for when a quick update is needed.</p>
+          </div>
+        </div>
+        <div class="feature-1">
+          <div class="div-block"></div>
+          <div>
+            <h4 class="heading-2">Infinite updates, zero contracts.</h4>
+            <p>Unlimited website possibilities, at a fraction of the cost.</p>
+          </div>
+        </div>
+        <div class="feature-1">
+          <div class="div-block"></div>
+          <div>
+            <h4 class="heading-2">Cancel anytime.</h4>
+            <p>No obligation at all, seamless process.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="w-node-_1907ccbe-b9fa-7c79-2f5c-0c3c607b132b-e5173f64" data-w-id="1907ccbe-b9fa-7c79-2f5c-0c3c607b132b" class="about-us-prompt">
+    <div data-w-id="1907ccbe-b9fa-7c79-2f5c-0c3c607b132c" class="interaction-block-background-about-us"></div>
+    <div class="about-us"></div>
+  </div>
+  <div class="hero-section-webrend">
+    <div data-w-id="008172c2-44e6-564f-70f6-6799a2101576" class="welcome-message">
+      <div class="div-block-35"></div>
+      <div data-w-id="989b5202-e122-4aa8-4610-b29d924143a1" class="hero-message">
+        <div data-w-id="3632a097-dc48-64e1-4729-3c325e992f07" class="see-plans-prompt">
+          <div class="text-block-27">Coming Soon</div>
+          <div class="text-block-5">Starting at $663/mo, or $165.75/we</div>
+          <div class="choice-selector-wrapper">
+            <div class="choice-selector">
+              <a href="#" class="start-a-project w-inline-block">
+                <h1>Start a Project</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare,</p>
+              </a>
+              <a href="#" class="start-a-membership w-inline-block">
+                <h1>Start a Membership</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare,</p>
+              </a>
+            </div>
+          </div>
+          <div class="spline-scene-9" data-w-id="8f877742-5a84-01a5-7fb1-043263e54c8e" data-animation-type="spline" data-spline-url="https://prod.spline.design/e0fMbsoJ8Hs9rTey/scene.splinecode"><canvas></canvas></div>
+        </div><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="image-17"><img src="images/mouse-cursor.png" alt="" class="image-19">
+        <h1 class="heading-5">Web development made easiest*</h1>
+        <p class="paragraph-4">Building the impossible in a few weeks or less.</p>
+        <div class="hero-button-wrapper">
+          <a href="work.html" class="button-13 w-button">See Work: Interactive Experience</a>
+          <div class="div-block-36">
+            <a href="work.html" class="calendly w-button">Talk with us</a>
+          </div>
+          <a data-w-id="997afd78-4cb9-5fa7-bfe7-ee4cf4999b7f" href="#" class="button-14 w-button">Buy</a>
+        </div>
+      </div>
+      <div class="trusted-clients">
+        <div class="div-block-33">
+          <div class="text-block-28">Trusted by small businesses and enterprises alike.</div>
+          <div class="trusted-clients-logos-and-names">
+            <div class="tata-technologies"><img src="images/tata-logo.png" alt="" class="trusted-client-logo tata"><img src="images/tatat-tech-logo-name.png" loading="lazy" sizes="100vw" srcset="images/tatat-tech-logo-name-p-500.png 500w, images/tatat-tech-logo-name-p-800.png 800w, images/tatat-tech-logo-name-p-1080.png 1080w, images/tatat-tech-logo-name.png 1440w" alt="" class="trusted-client-logo-tata"></div>
+            <div class="div-block-34"><img src="images/peoplenoise_head_-removebg-preview.png" alt="" class="trusted-client-logo">
+              <div class="text-block-33-copy">PEOPLENOISE</div>
+            </div>
+            <div class="serene-solitude-sanctuary"><img src="images/TripleS_Logo-min.png" alt="" sizes="(max-width: 479px) 8.146151542663574px, (max-width: 767px) 5vw, 34.99551010131836px" srcset="images/TripleS_Logo-min-p-500.png 500w, images/TripleS_Logo-min-p-800.png 800w, images/TripleS_Logo-min.png 930w" class="trusted-client-logo">
+              <div class="text-block-32">Serene Solitude Sanctuary</div>
+            </div>
+            <div class="marv-studio"><img src="images/marv-new-logo-final.png" alt="" class="trusted-client-logo marv-studio">
+              <div class="text-block-31">MARV STUDIO</div>
+            </div>
+            <div class="div-block-34"><img src="images/White-and-Black-Modern-Initial-B-Logo.png" alt="" class="trusted-client-logo blenderbin">
+              <div class="text-block-30">BlenderBin</div>
+            </div>
+            <div class="webflow-partner"><img src="images/webflow-premium-partner.png" alt="" class="trusted-client-logo webflow">
+              <div class="text-block-29-copy">WebFlow Certified Partner</div>
+            </div>
+            <div class="div-block-34"><img src="images/star.png" alt="" class="trusted-client-logo eravista">
+              <div class="text-block-29">ERAVISTA</div>
+            </div>
+            <div class="pxl_pck"><img src="images/Pxl_Pck.png" loading="lazy" sizes="100vw" srcset="images/Pxl_Pck-p-500.png 500w, images/Pxl_Pck.png 875w" alt="" class="trusted-client-logo-pxl_pck"><img src="images/Pxl_Pck-new-logo-min.png" alt="" sizes="(max-width: 479px) 7.966457366943359px, (max-width: 767px) 5vw, 34.99551010131836px" srcset="images/Pxl_Pck-new-logo-min-p-500.png 500w, images/Pxl_Pck-new-logo-min.png 640w" class="trusted-client-logo"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-camera"><img src="images/W-letter-for-webrend-min.png" loading="lazy" width="Auto" alt="" class="logo-main-page">
+      <div class="camera-lens">
+        <div class="webrend-hero-section">
+          <div class="background-3d-scene w-embed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section id="this-is-a-website" data-w-id="78dafe31-a9dd-9d79-4dc2-e358662cdaf9" class="this-is-a-website-explaination">
+    <div data-w-id="0181129a-a265-31b7-b8b9-59562b283b98" class="computer-wrapper-with-window">
+      <div class="camera-website-explain">
+        <div class="background-3d-scene-copy" data-w-id="e844e765-090f-544c-0a1d-2ba62b3fb432" data-animation-type="spline" data-spline-url="https://prod.spline.design/hqrkFLqgLi1hUM4T/scene.splinecode"><canvas></canvas></div>
+        <div class="heading-for-this-is-your-website">
+          <h1 class="this-is-your-website">This is your website.</h1>
+          <h1 class="it-looks-like-every-other-website-out-there">Do you like it? Seems a little dull?</h1>
+          <h1 class="maybe-you-want-something-different">What if we changed that?</h1>
+          <h1 class="or-maybe-some-3d">What if we got 5k people to view your site every month?</h1>
+          <h1 class="we-can-do-it-all">Would your life change?</h1>
+        </div>
+        <div class="website-explanation-panel">
+          <div class="address"></div>
+          <div class="websites-for-panel">
+            <div class="this-is-a-website-div-block"></div>
+            <div class="maybe-you-want-custom-code">
+              <div class="website-preview">
+                <div class="preview-nav-bar">
+                  <div class="preview-lines"></div>
+                  <div class="nav-bar-preview-inside">
+                    <a href="#" class="button-6 w-button">Home</a>
+                    <a href="#" class="button-7 w-button">About</a>
+                    <a href="#" class="button-8 w-button">Roadmap</a>
+                    <a href="#" class="button-9 w-button">Button Text</a>
+                  </div>
+                  <div class="preview-lines"></div>
+                </div>
+                <div class="website-preview-heading">
+                  <h1 class="heading-19">Serene Solitude Sanctuary</h1>
+                  <p class="paragraph-16">A new serenity.</p>
+                </div>
+              </div>
+              <div id="typewriter-container" class="typewriter-container">
+                <div class="div-block-17"></div>
+                <div id="code-container" class="code-container w-embed"></div>
+              </div>
+              <div class="code-css-for-typewriter w-embed">
+                <style>
+.code-container {
+  border: 1px solid #585858;
+  background-color: #1e1e1e;
+  font-size: 1em;
+  white-space: pre;
+}
+@keyframes blink {
+  0% { border-right-color: #61dafb; }
+  50% { border-right-color: transparent; }
+  100% { border-right-color: #61dafb; }
+}
+.typewriter-effect::after {
+  content: '';
+  border-right: 2px solid #61dafb;
+  animation: blink 1s step-end infinite;
+}
+</style>
+              </div>
+              <div class="code-for-code-on-scroll w-embed w-script">
+                <script>
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+  const codeContainer = document.getElementById('code-container');
+  const typewriterContainer = document.getElementById('typewriter-container');
+  const code = `
+  function handleSignIn(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
+    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log('user logged in: ' + user.email);
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      var errorText = document.getElementById('signin-error-message');
+      console.log(errorMessage);
+      errorText.innerHTML = errorMessage;
+    });
+  }
+  // Handle signOut
+  function handleSignOut() {
+    signOut(auth).then(() => {
+      console.log('user signed out');
+    }).catch((error) => {
+      const errorMessage = error.message;
+      console.log(errorMessage);
+    });
+  }
+  export const getCheckoutUrl = async function(app, priceId) {
+    const auth = getAuth(app);
+    const userId = auth.currentUser?.uid;
+    if (!userId) throw new Error("User is not authenticated");
+    const db = getFirestore(app);
+    const checkoutSessionRef = collection(db, "customers", userId, "checkout_sessions");
+    const docRef = await addDoc(checkoutSessionRef, {
+      price: priceId,
+      success_url: window.location.origin,
+      cancel_url: window.location.origin,
+    });
+    return new Promise(function(resolve, reject) {
+      const unsubscribe = onSnapshot(docRef, function(snap) {
+        const { error, url } = snap.data();
+        if (error) {
+          unsubscribe();
+        }
+        if (url) {
+          console.log("Stripe Checkout URL:", url);
+          unsubscribe();
+          resolve(url);
+        }
+      });
+    });
+  };
+  export const getPortalUrl = async function(app) {
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+    let dataWithUrl;
+    try {
+      const functions = getFunctions(app, "us-central1");
+      const functionRef = httpsCallable(functions, "ext-firestore-stripe-payments-createPortalLink");
+      const { data } = await functionRef({
+        customerId: user?.uid,
+        returnUrl: window.location.origin,
+      });
+      // Add a type to the data
+      dataWithUrl = data;
+      console.log("Reroute to Stripe portal: ", dataWithUrl.url);
+    } catch (error) {
+      console.error(error);
+    }
+    return new Promise(function(resolve, reject) {
+      if (dataWithUrl.url) {
+        resolve(dataWithUrl.url);
+      } else {
+        reject(new Error("No url returned"));
+      }
+    });
+  };
+  function buyBasicPoints() {
+    const buyBasicPointsNow = async () => {
+      const priceId = "price_1Pe0T0GLCrtq5FJQe55KG3nv";
+      const checkoutUrl = await getCheckoutUrl(app, priceId);
+      window.location.href = checkoutUrl;
+      console.log("Bought Points Basic");
+    };
+    buyBasicPointsNow();
+  }
+  onAuthStateChanged(auth, (user) => {
+    let publicElements = document.querySelectorAll("[data-onlogin='hide']");
+    let privateElements = document.querySelectorAll("[data-onlogin='show']");
+    if (user) {
+      // User is signed in, see docs for a list of available properties            
+      const uid = user.uid;
+      privateElements.forEach(function(element) {
+        element.style.display = "initial";
+      });
+      publicElements.forEach(function(element) {
+        element.style.display = "none";
+      });
+      console.log(\`The current user's UID is equal to \${uid}\`);
+    } else {
+      // User is signed out
+      publicElements.forEach(function(element) {
+        element.style.display = "initial";
+      });
+      privateElements.forEach(function(element) {
+        element.style.display = "none");
+      });
+    }
+  });
+  `;
+  let index = 0;
+  function typeCode() {
+    if (index < code.length) {
+      codeContainer.textContent += code[index];
+      index++;
+      setTimeout(typeCode, 25);
+    } else {
+      codeContainer.classList.remove('typewriter-effect');
+    }
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        typeCode();
+        observer.unobserve(typewriterContainer);
+      }
+    });
+  });
+  observer.observe(typewriterContainer);
+  codeContainer.classList.add('typewriter-effect');
+});
+</script>
+              </div>
+            </div>
+            <div class="maybe-add-some-3d"></div>
+            <div class="vouala-thats-better"></div>
+          </div>
+        </div>
+        <div class="macbook-dock"><img src="images/Finder_Icon_macOS_Big_Sur-min.png" loading="lazy" sizes="1vw" srcset="images/Finder_Icon_macOS_Big_Sur-min-p-500.png 500w, images/Finder_Icon_macOS_Big_Sur-min-p-800.png 800w, images/Finder_Icon_macOS_Big_Sur-min.png 1024w" alt="" class="image-18 finder"><img src="images/Safari_browser_logo.svg-min.png" loading="lazy" sizes="(max-width: 479px) 3vw, 1vw" srcset="images/Safari_browser_logo.svg-min-p-500.png 500w, images/Safari_browser_logo.svg-min-p-800.png 800w, images/Safari_browser_logo.svg-min-p-1080.png 1080w, images/Safari_browser_logo.svg-min-p-1600.png 1600w, images/Safari_browser_logo.svg-min.png 2057w" alt="" class="image-18 safari"><img src="images/Arc_browser_logo.svg-1-min.png" loading="lazy" sizes="(max-width: 479px) 5vw, (max-width: 767px) 10.077956199645996px, 1vw" srcset="images/Arc_browser_logo.svg-1-min-p-500.png 500w, images/Arc_browser_logo.svg-1-min.png 1200w" alt="" class="image-18 arc"><img src="images/Notion_app_logo-1-min.png" loading="lazy" alt="" class="image-18 notion"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="image-18"></div>
+        <div class="gradients"></div>
+      </div>
+    </div>
+  </section>
+  <div data-w-id="116d337c-9e10-4fc7-7083-a47bed037833" class="who-we-are-desc">
+    <div class="div-block-39">
+      <h1 class="heading-32">Change your look, or create the next big thing, we do the impossible.</h1>
+      <p class="paragraph-28">The type of business to complete websites and create full revenue streams in a matter of weeks.</p>
+      <a href="#tva-door" class="button-13 w-button">Visit Showroom</a>
+      <div class="who-we-are">
+        <div id="w-node-cb63cdc6-d917-c50b-ea06-bb7549dc5c3c-e5173f64" class="div-block-29 github">
+          <h1 class="heading-31">Daily record of GitHub contributions.</h1>
+          <div class="code-embed-5 w-embed"><img class="git-image" src="https://ghchart.rshah.org/409ba5/gitkevinvera" alt="gitkevinvera's Github chart"></div>
+        </div>
+        <div id="w-node-f398aef1-697e-8a62-e04e-2f6c840d7cf8-e5173f64" class="div-block-29 saas-development">
+          <h1 class="heading-34">Only pay for what you need, no tricks.</h1>
+        </div>
+        <div id="w-node-f05fabbf-a13d-c772-27bd-229975c29597-e5173f64" class="div-block-29 contact-anytime">
+          <h1 class="heading-37">24/7 Direct Communication &amp; same day updates.</h1>
+        </div>
+        <div id="w-node-_193679c9-f688-0888-69d1-05f290c1497e-e5173f64" class="div-block-29 interactive">
+          <h1 class="heading-38">Interactive experiences, guaranteed.</h1>
+        </div>
+        <div id="w-node-_41457547-1430-518c-5f59-cbd98de6b502-e5173f64" class="div-block-29 seo">
+          <h1 class="heading-29">Achieved over 5k+ clicks per month on SEO leveraging GoDaddy&#x27;s auction.</h1><img src="images/search-bar.png" loading="lazy" sizes="100vw" srcset="images/search-bar-p-500.png 500w, images/search-bar-p-800.png 800w, images/search-bar.png 1064w" alt="" class="image-20">
+        </div>
+        <div id="w-node-cdc95c55-050b-50fc-0cea-1a16023948ef-e5173f64" class="div-block-29 ai-website">
+          <h1 class="heading-36">Used Socket IO, Typescript SWC, and EC2 Instance to replicate Figma collaboration, in a 3D environment.</h1>
+        </div>
+        <div id="w-node-d031df7a-6d56-4ab9-fef6-ac6c95b4e5ad-e5173f64" class="dynamic-video-block">
+          <h1 class="heading-35">Built the entirety of the BlenderBin SaaS in 3 weeks.</h1>
+        </div>
+        <div id="w-node-_50335b04-3a01-4629-b17b-b0fa32a59201-e5173f64" class="div-block-29 services">
+          <h1 class="heading-30">Custom pricing for where you&#x27;re at, and where you&#x27;re from.</h1>
+        </div>
+        <div id="w-node-cb4ea8b1-6a2d-de83-591c-bb9f4bc0c150-e5173f64" class="div-block-29 refferal-program">
+          <h1 class="heading-33">Subscription prices if you need consistency.</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section id="tva-door" class="interactive-section-for-showroom">
+    <div class="div-block-44">
+      <a href="work.html" class="color-changing-backdrop w-inline-block"></a>
+      <div class="w-embed">
+        <style>
+.color-changing-backdrop {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.color-changing-backdrop::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: hue-rotate(0deg);
+  animation: hue-rotate 8s linear infinite;
+}
+@keyframes hue-rotate {
+  0% {
+    backdrop-filter: hue-rotate(0deg);
+  }
+  12.5% {
+    backdrop-filter: hue-rotate(45deg);
+  }
+  25% {
+    backdrop-filter: hue-rotate(90deg);
+  }
+  37.5% {
+    backdrop-filter: hue-rotate(135deg);
+  }
+  50% {
+    backdrop-filter: hue-rotate(180deg);
+  }
+  62.5% {
+    backdrop-filter: hue-rotate(225deg);
+  }
+  75% {
+    backdrop-filter: hue-rotate(270deg);
+  }
+  87.5% {
+    backdrop-filter: hue-rotate(315deg);
+  }
+  100% {
+    backdrop-filter: hue-rotate(360deg);
+  }
+}
+</style>
+      </div>
+    </div>
+    <div class="div-block-41"><img src="images/W-letter-for-webrend-min.png" loading="lazy" width="Auto" alt="" class="logo-main-page-copy">
+      <div class="text-block-34">Click on the door.</div>
+      <h1>We don&#x27;t just talk about our successes, we display them.</h1>
+      <p>In purest art form. Visit our gallery, and enjoy this interactive experience that showcases our client work, all while giving you a taste of what we&#x27;re capable of.</p>
+    </div>
+  </section>
+  <section class="possibility-tablets">
+    <div class="div-block-43">
+      <div class="div-block-42">COMING SOON</div>
+      <div class="div-block-23">
+        <div>
+          <h1>Rent-A-Rend</h1>
+        </div>
+        <p class="paragraph-29">Rent a website under us that we have already built. We tune it how you like, and you reap the benefits of it&#x27;s SEO.</p>
+        <a href="#tva-door" class="button-13-copy w-button">Learn more</a>
+      </div>
+    </div>
+  </section>
+  <section id="w-node-_6a533e9a-2e14-94f4-0546-183dd6017896-e5173f64" class="clients-limiter">
+    <section data-w-id="16a4a7b4-d9b5-d0a7-8dd6-ddf46574cd74" class="clients">
+      <div id="w-node-_92d986fb-eadd-e9f7-562b-13368a40f080-e5173f64" data-w-id="92d986fb-eadd-e9f7-562b-13368a40f080" class="banner design-website"></div>
+      <div id="w-node-a3df7267-daca-70d1-1056-3071e46c8163-e5173f64" data-w-id="a3df7267-daca-70d1-1056-3071e46c8163" class="banner client-1"></div>
+      <div id="w-node-ce2682e4-2c40-9cfb-1cf0-ee3e8f491305-e5173f64" data-w-id="ce2682e4-2c40-9cfb-1cf0-ee3e8f491305" class="banner client-2"></div>
+      <div id="w-node-a2f50d83-1bde-be5c-0c63-54d2962f3fdf-e5173f64" data-w-id="a2f50d83-1bde-be5c-0c63-54d2962f3fdf" class="banner webrend-logo">
+        <a data-w-id="fe164b51-dce7-4b75-09a5-25f5f9cd3da2" href="#" target="_blank" class="link-block-2 w-inline-block"></a>
+      </div>
+      <a id="w-node-_280fa73c-d110-1d48-c2b6-fc61cfe8aac8-e5173f64" data-w-id="280fa73c-d110-1d48-c2b6-fc61cfe8aac8" href="http://marv.studio/points" target="_blank" class="banner blender-points w-inline-block"></a>
+      <a id="w-node-e787e069-22df-d82a-5801-070b9127fd6f-e5173f64" data-w-id="e787e069-22df-d82a-5801-070b9127fd6f" href="http://marv.studio/points" target="_blank" class="banner spotify-widget w-inline-block">
+        <div class="code-embed-4 w-embed w-iframe"><iframe src="https://open.spotify.com/embed/user/31n45incdbz6nugelljf3gatynem/playlist/66H9yZ9zgR5778wQDxyX7j" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media">
+          </iframe></div>
+      </a>
+      <div id="w-node-c6b37b59-9a2e-36d6-0aa7-7853462c0454-e5173f64" class="div-block-15">
+        <h1 class="heading-18">Be different. Be the next big thing.<br>Join us.</h1>
+      </div>
+    </section>
+  </section>
+  <section class="placeholder-footer"></section>
+  <section class="actual-footer">
+    <div class="text-block-35">Copyright WebRend 2024. All rights reserved.</div>
+  </section>
+  <a href="http://webrend.com" target="_blank" class="webrend-watermark w-inline-block"><img loading="lazy" src="images/W-letter-for-webrend-min.png" alt="" class="image-8">
+    <h4 class="heading-17">WebRend</h4>
+  </a>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6671ae62b353859ee5173f5d" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="js/webflow.js" type="text/javascript"></script>
+</body>
+</html>
